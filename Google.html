@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+      rel="stylesheet"
+    />
+    <title>Google</title>
+    <style>
+      .container {
+        display: block;
+        justify-content: space-between;
+        padding-left: 1%;
+        padding-right: 4%;
+
+        height: 100px;
+      }
+      .logo {
+        display: block;
+        float: left;
+        width: 100px;
+        padding: 1%;
+      }
+
+      img {
+        display: inline-block;
+        width: 100%;
+      }
+
+      input {
+        display: inline-block;
+        width: 10%;
+      }
+
+      .search {
+        display: block;
+        float: left;
+        width: 600px;
+        height: 50px;
+
+        margin-left: 20px;
+        margin-top: 25px;
+      }
+
+      .icons {
+        display: block;
+        float: left;
+        width: 300px;
+        height: 50px;
+        margin-left: 300px;
+        margin-top: 25px;
+      }
+
+      .icons span {
+        padding: 3%;
+      }
+
+      #query {
+        display: inline-block;
+        width: 550px;
+        height: 30px;
+        border: 1px solid black;
+      }
+      .btn {
+        display: inline-block;
+        height: 34px;
+        margin-top: 1%;
+      }
+
+      #domainID {
+        display: flex;
+
+        width: 60%;
+        flex-direction: row;
+        float: left;
+
+        height: 150px;
+
+        margin-top: 20px;
+        margin-left: 50px;
+        /* grid-template-rows: repeat(10, 20%); */
+      }
+
+      #domaincolor {
+        display: flex;
+        flex-direction: row;
+        font-size: 14px;
+        color: black;
+        font-weight: bold;
+        /* cursor: pointer; */
+        padding: 2%;
+        margin: 1%;
+        height: 20px;
+        margin-left: 30px;
+      }
+
+      #titlename {
+        display: flex;
+        flex-direction: row;
+        font-size: 18px;
+        font-weight: bold;
+        color: blue;
+        cursor: pointer;
+        padding: 2%;
+        margin: 1%;
+        height: 20px;
+        position: absolute;
+        margin-top: 20px;
+      }
+
+      #descriptionp {
+        display: flex;
+        word-wrap: break-word;
+        font-size: 18px;
+        font-weight: normal;
+        color: #212121;
+        padding: 2%;
+        margin: 1%;
+        height: 25px;
+        position: absolute;
+        margin-top: 50px;
+        width: 450px;
+      }
+
+      #other {
+        display: flex;
+        width: 30%;
+        height: 500px;
+
+        margin-left: 65%;
+        margin-top: 15px;
+      }
+
+      #domainID1 {
+        display: flex;
+        width: 80%;
+        height: auto;
+      }
+
+      #imgpic {
+        width: 100%;
+        height: 200px;
+        padding: 3%;
+      }
+
+      #titlenamesecond {
+        display: flex;
+        position: absolute;
+        margin-top: 200px;
+        font-size: 22px;
+        color: blue;
+        font-weight: bold;
+        padding: 3%;
+      }
+
+      #descriptionp1 {
+        display: flex;
+        position: absolute;
+        margin-top: 250px;
+        width: 200px;
+        padding: 3%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">
+        <img
+          src="https://cdn.vox-cdn.com/thumbor/Pkmq1nm3skO0-j693JTMd7RL0Zk=/0x0:2012x1341/1200x800/filters:focal(0x0:2012x1341)/cdn.vox-cdn.com/uploads/chorus_image/image/47070706/google2.0.0.jpg"
+        />
+      </div>
+      <div class="search">
+        <input placeholder="&nbsp;&nbsp;Search" type="text" id="query" />
+        <button class="btn" onclick="makeRequest()">&#128269;</button>
+      </div>
+      <div class="icons">
+        <span class="material-icons-outlined">settings</span>
+        <span id="apps" class="material-icons-outlined">apps</span>
+      </div>
+    </div>
+    <div id="videos"></div>
+    <div id="other"></div>
+  </body>
+</html>
+
+<script>
+  let videos_div = document.getElementById("videos");
+  let other_div = document.getElementById("other");
+  async function makeRequest() {
+    let q = document.getElementById("query").value;
+    try {
+      let res = await fetch(
+        `https://app.zenserp.com/api/v2/search?apikey=8f3b76c0-f51b-11eb-a873-9f60fc3403d8&q=${q}`
+      );
+      let data = await res.json();
+      console.log(data);
+
+      appendMovies(data.organic);
+      appendother(data.knowledge_graph);
+
+      //   return data.organic_results;
+    } catch (err) {
+      console.log("err", err);
+    }
+  }
+
+  function appendMovies(d) {
+    videos_div.innerHTML = null;
+    d.forEach(({ url, title, description }) => {
+      let div = document.createElement("div");
+      div.setAttribute("id", "domainID");
+
+      let p = document.createElement("p");
+      p.setAttribute("id", "domaincolor");
+      p.innerHTML = url;
+
+      let p_birth = document.createElement("p");
+      p_birth.setAttribute("id", "titlename");
+
+      p_birth.addEventListener("click", () => {
+        window.open(url);
+      });
+      p_birth.innerHTML = title;
+
+      let p_description = document.createElement("p");
+      p_description.setAttribute("id", "descriptionp");
+      p_description.innerHTML = description;
+
+      div.append(p, p_birth, p_description);
+
+      videos_div.append(div);
+    });
+  }
+
+  function appendother(f) {
+    f.forEach(({ title, description }) => {
+      let div = document.createElement("div");
+      div.setAttribute("id", "domainID1");
+
+      let data_img = document.createElement("img");
+      data_img.setAttribute("id", "imgpic");
+      data_img.src =
+        "data:image/png;base64,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";
+
+      let p_birth = document.createElement("p");
+      p_birth.setAttribute("id", "titlenamesecond");
+
+      p_birth.innerHTML = title;
+
+      let p_description = document.createElement("p");
+      p_description.setAttribute("id", "descriptionp1");
+      p_description.innerHTML = description;
+
+      div.append(data_img, p_birth, p_description);
+
+      other_div.append(div);
+    });
+  }
+</script>
